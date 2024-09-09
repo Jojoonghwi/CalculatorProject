@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.ArrayList;
-//예외처리
+//예외처리()
 //1. 계산 식에 맞지 않는 문자 있으면 다시 입력
 //2. 괄호 짝 맞지 않으면 다시 입력
 //3. 0으로 나누려고 할 때 다시 입력
