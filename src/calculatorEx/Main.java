@@ -47,7 +47,7 @@ public class Main {
         while (true) {
             System.out.print("띄어쓰기 없이 계산식을 입력하세요(+, -, x, /, ^, r) : ");
             str1 = sc.nextLine();
-            if (str1.equals("exit")) {
+            if (str1.contains("exit")) {
                 System.out.print("프로그램을 종료합니다");
                 break;
             }
