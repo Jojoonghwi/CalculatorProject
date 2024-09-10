@@ -128,9 +128,11 @@ public class Main {
                 }
                 else if ((checkStr.equals("+")) || checkStr.equals("-") || checkStr.equals("*") || checkStr.equals("/") || checkStr.equals("^") || checkStr.equals("r")) {
                     //연산자 연속으로 입력 예외처리 ex)2++3
-                    if((inputstr[i+1].equals("+")) || inputstr[i+1].equals("-") || inputstr[i+1].equals("*") || inputstr[i+1].equals("/") || inputstr[i+1].equals("^") || inputstr[i+1].equals("r")) {
-                        System.out.println("연산자가 연속으로 입력되었습니다");
-                        continue loopOut;
+                    if(!checkStr.equals("r")) { //식이 r로 끝날 때 [i + 1]조회 시 에러
+                        if ((inputstr[i + 1].equals("+")) || inputstr[i + 1].equals("-") || inputstr[i + 1].equals("*") || inputstr[i + 1].equals("/") || inputstr[i + 1].equals("^")) {
+                            System.out.println("연산자가 연속으로 입력되었습니다");
+                            continue loopOut;
+                        }
                     }
                     if (checkStr.equals("/")) {
                         //나누기 다음 값이 0일때
@@ -147,7 +149,6 @@ public class Main {
                     Operator_stack.push(checkStr);
                 }
                 else {
-
                     //숫자 저장할 때 문자가 있으면 다시 입력
                     for (int k = 0; k < checkStr.length(); k++) {
                         char c = checkStr.charAt(k);
@@ -158,6 +159,15 @@ public class Main {
                             }
                         }
                     }
+
+                    try {
+                        Integer.parseInt(checkStr);
+                    }
+                    catch (NumberFormatException e) {   //예외처리4. 계산할 두 식 int 변수 범위를 벗어날 때 예외처리
+                        System.out.println("-2,147,483,648 ~ 2,147,483,647의 값을 입력하세요");
+                        continue loopOut;
+                    }
+
                     Collection[j] = checkStr;//숫자는 게산식 배열에 그냥 넣기
                     j++;
                 }

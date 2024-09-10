@@ -8,17 +8,17 @@ public class Calculator {
     private int sqrt_result;//제곱근 결과 실수형
     private String[] new_Collection;
 
-    private Queue<Integer> resultQueue = new LinkedList<Integer>(); //계산 기록 출력할 Queue
-    private Stack<Integer> result_Stack = new Stack<Integer>();//연산할때 사용할 Stack
+    private Queue<Double> resultQueue = new LinkedList<Double>(); //계산 기록 출력할 Queue
+    private Stack<Double> result_Stack = new Stack<Double>();//연산할때 사용할 Stack
 
     public void setValue(String[] new_Collection) {
         this.new_Collection = new_Collection;
     }
 
     public double getCalculate() {
-        int firstNum;
-        int secondNum;
-        int result = 0;
+        double firstNum;
+        double secondNum;
+        double result = 0;
         for (int i = 0; i < new_Collection.length; i++) {
             //연산 기호면
             if (new_Collection[i].equals("+")) {
@@ -66,19 +66,13 @@ public class Calculator {
             else if (new_Collection[i].equals("r")) {
                 firstNum = result_Stack.pop();
 
-                result = (int)Math.sqrt(firstNum);
+                result = Math.sqrt(firstNum);
                 result_Stack.add(result);
             }
 
             //숫자면
             else {
-                try {
-                    result_Stack.push(Integer.parseInt(new_Collection[i]));
-                }
-                catch (NumberFormatException e) {   //예외처리4. 계산할 두 식 int 변수 범위를 벗어날 때 예외처리
-                    System.out.println("-2,147,483,648 ~ 2,147,483,647의 값을 입력하세요");
-                    return 0;
-                }
+                result_Stack.push(Double.parseDouble(new_Collection[i]));
             }
         }
         System.out.println("결과 : " + result);
