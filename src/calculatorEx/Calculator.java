@@ -82,7 +82,7 @@ public class Calculator {
         return result;
     }
 
-    //한개 삭제 후 연산 결과 조회
+    //기록 삭제
     public void getRemoveResult(int a) {
         if (a == 2) {
             resultQueue.poll();
@@ -94,7 +94,7 @@ public class Calculator {
         }
     }
 
-    //연산 결과 조회
+    //결과 조회
     public void getResultHistory() {
         System.out.println("연산 기록 " + resultQueue);
     }
