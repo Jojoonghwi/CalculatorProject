@@ -65,8 +65,8 @@ public class Main {
             //띄어쓰기 있는지 확인
             for (int i = 0; i < str1.length(); i++) {
                 if (str1.contains(" ")) {
-                    System.out.print("띄어쓰기 없이 다시 입력하세요");
-                    continue;
+                    System.out.println("띄어쓰기 없이 다시 입력하세요");
+                    continue loopOut;
                 }
             }
 
@@ -80,7 +80,7 @@ public class Main {
             str1 = str1.replace("*", " * ");
             str1 = str1.replace("^", " ^ ");
             str1 = str1.replace("r", " r ");
-            str1 = str1.replace("  ", " "); //띄어쓰기 두개 생겨서
+            str1 = str1.replace("  ", " "); //띄어쓰기 두개 생겨서 '+('
 
             String[] inputstr_old = str1.split(" ");//입력 받은 계산 식 띄어쓰기 기준으로 한글자씩 배열에 저장
             if(inputstr_old.length < 3 && !(str1.contains(" r "))) {//루트 연산자가 아니면 3개 이상 있어야 완전한 식
@@ -127,6 +127,11 @@ public class Main {
                     parentheses_num++;
                 }
                 else if ((checkStr.equals("+")) || checkStr.equals("-") || checkStr.equals("*") || checkStr.equals("/") || checkStr.equals("^") || checkStr.equals("r")) {
+                    //연산자 연속으로 입력 예외처리 ex)2++3
+                    if((inputstr[i+1].equals("+")) || inputstr[i+1].equals("-") || inputstr[i+1].equals("*") || inputstr[i+1].equals("/") || inputstr[i+1].equals("^") || inputstr[i+1].equals("r")) {
+                        System.out.println("연산자가 연속으로 입력되었습니다");
+                        continue loopOut;
+                    }
                     if (checkStr.equals("/")) {
                         //나누기 다음 값이 0일때
                         if (inputstr[i + 1].equals("0")) {
@@ -142,13 +147,6 @@ public class Main {
                     Operator_stack.push(checkStr);
                 }
                 else {
-//                    //실수형으로 하면 오류 안남
-//                    try {
-//                        double firstNum = Double.parseDouble(checkStr);
-//                    } catch (NumberFormatException e) {   //예외처리4. 계산할 두 식 int 변수 범위를 벗어날 때 예외처리
-//                        System.out.println("-2,147,483,648 ~ 2,147,483,647의 값을 입력하세요");
-//                        continue loopOut;
-//                    }
 
                     //숫자 저장할 때 문자가 있으면 다시 입력
                     for (int k = 0; k < checkStr.length(); k++) {
@@ -172,16 +170,22 @@ public class Main {
             }
 
             String[] new_Collection = Arrays.copyOf(Collection, Collection.length - parentheses_num); //괄호만큼 null값이 생겨서 배열 새로 생성(parentheses_num : 괄호 숫자)
+            double value;
             cal.setValue(new_Collection);
-            cal.getCalculate();
+            value = cal.getCalculate();
+            if(value == 0) {
+                continue loopOut;
+            }
 
             //연산 이후 동작 선택
-            System.out.print("원하는 가능 입력 - 기록 조회 : 1 / 데이터 삭제 : 2 / 종료 : exit : ");
+            System.out.print("원하는 가능 입력 - 기록 조회 : 1 / 데이터 삭제 : 2 / 모두 삭제 : 3 / 종료 : exit : ");
             String function = sc.nextLine();
             if (function.equals("1")) {
                 cal.getResultHistory();
             } else if (function.equals("2")) {
-                cal.getRemoveResult();
+                cal.getRemoveResult(2);
+            } else if (function.equals("3")) {
+                cal.getRemoveResult(3);
             } else if (function.equals("exit")) {
                 break;
             }
