@@ -1,9 +1,9 @@
 package calculatorEx;
-
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.ArrayList;
+import java.util.List;
 //예외처리()
 //1. 계산 식에 맞지 않는 문자 있으면 다시 입력
 //2. 괄호 짝 맞지 않으면 다시 입력
@@ -39,9 +39,12 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         Calculator cal = new Calculator();
 
-        String str1;       //예외처리를 위해 계산할 식 문자열로 입력
+        String str1; //계산할 식 입력 받을 문자열
+        int index = 0; //배열 저장 인덱스
+        int parentheses_num = 0; //괄호 갯수
 
-        Stack<String> Operator_stack = new Stack<>(); //연산자, 괄호를 담을 스택
+        Stack<String> Operator_stack = new Stack<>(); //후위 연산에 필요한 연산자, 괄호를 담을 스택
+        List<String> inputStr_List = new ArrayList<>(); //계산식을 공백 기준으로 담을 리스트
 
         loopOut:
         while (true) {
@@ -82,36 +85,37 @@ public class Main {
             str1 = str1.replace("r", " r ");
             str1 = str1.replace("  ", " "); //띄어쓰기 두개 생겨서 '+('
 
-            String[] inputstr_old = str1.split(" ");//입력 받은 계산 식 띄어쓰기 기준으로 한글자씩 배열에 저장
-            if(inputstr_old.length < 3 && !(str1.contains(" r "))) {//루트 연산자가 아니면 3개 이상 있어야 완전한 식
-                continue loopOut;
+            String[] inputstr = str1.split(" ");//입력 받은 계산 식 띄어쓰기 기준으로 한글자씩 배열에 저장
+
+            //문자열 배열 값 리스트에 저장
+
+            for(int i=0; i<inputstr.length; i++) {
+                inputStr_List.add(inputstr[i]);
             }
-            String[] inputstr = inputstr_old;
+
+            if(inputStr_List.size() < 3 && !(str1.contains(" r "))) {//루트 연산자가 아니면 3개 이상 있어야 완전한 식
+                continue;
+            }
 
             //계산식이 괄호로 시작하면 맨 앞 값이 ""
-            if (inputstr_old[0].equals("")) {
-                System.arraycopy(inputstr_old, 1, inputstr_old, 0, inputstr_old.length - 1);//맨 앞자리 ""제외하고 복사
-                //괄호로 시작하고 괄호로 끝나면 원래 배열 -1만큼 복사해서 마지막에 괄호 남음
-                //원래 배열의 -1만큼 다시 생성
-                inputstr = Arrays.copyOf(inputstr_old, inputstr_old.length - 1);
+            if (inputStr_List.get(0).isEmpty()) {
+                inputStr_List.remove(0);
             }
 
             //맨 앞자리가 '-'일떄 다시 입력
-            if (inputstr[0].equals("-")) {
+            if (inputStr_List.get(0).equals("-")) {
                 System.out.println("0보다 큰 수만 입력하세요");
-                continue loopOut;
+                continue;
             }
 
-            String[] Collection = new String[inputstr.length];//후위 계산식 넣을 배열
-            int j = 0; // 배열 저장 인덱스
-            int parentheses_num = 0; //괄호 갯수
+            String[] Collection = new String[inputStr_List.size()];//후위 계산식 넣을 배열
 
             //배열에 후위식 정렬
-            for (int i = 0; i < inputstr.length; i++) {
-                String checkStr = inputstr[i];
+            for (int i = 0; i < inputStr_List.size(); i++) {
+                String checkStr = inputStr_List.get(i);
                 if (checkStr.equals("(")) {
                     //괄호 다음 '-'일때
-                    if (inputstr[i + 1].equals("-")) {
+                    if (inputStr_List.get(i + 1).equals("-")) {
                         System.out.println("0보다 큰 수만 입력하세요");
                         continue loopOut;
                     }
@@ -120,8 +124,8 @@ public class Main {
                 }
                 else if (checkStr.equals(")")) {
                     while (!Operator_stack.isEmpty() && !Operator_stack.peek().equals("(")) {
-                        Collection[j] = Operator_stack.pop(); //끝 괄호면 시작 괄호 만날때 까지 다 빼기
-                        j++;
+                        Collection[index] = Operator_stack.pop(); //끝 괄호면 시작 괄호 만날때 까지 다 빼기
+                        index++;
                     }
                     Operator_stack.pop();
                     parentheses_num++;
@@ -129,22 +133,23 @@ public class Main {
                 else if ((checkStr.equals("+")) || checkStr.equals("-") || checkStr.equals("*") || checkStr.equals("/") || checkStr.equals("^") || checkStr.equals("r")) {
                     //연산자 연속으로 입력 예외처리 ex)2++3
                     if(!checkStr.equals("r")) { //식이 r로 끝날 때 [i + 1]조회 시 에러
-                        if ((inputstr[i + 1].equals("+")) || inputstr[i + 1].equals("-") || inputstr[i + 1].equals("*") || inputstr[i + 1].equals("/") || inputstr[i + 1].equals("^")) {
+                        if ((inputStr_List.get(i + 1).equals("+")) || inputStr_List.get(i + 1).equals("-") || inputStr_List.get(i + 1).equals("*")
+                                || inputStr_List.get(i + 1).equals("/") || inputStr_List.get(i + 1).equals("^")) {
                             System.out.println("연산자가 연속으로 입력되었습니다");
                             continue loopOut;
                         }
                     }
                     if (checkStr.equals("/")) {
                         //나누기 다음 값이 0일때
-                        if (inputstr[i + 1].equals("0")) {
+                        if (inputStr_List.get(i + 1).equals("0")) {
                             System.out.println("0으로 나눌 수 없습니다");
                             continue loopOut;
                         }
                     }
 
-                    while (!Operator_stack.isEmpty() && priority(Operator_stack.peek()) >= priority(checkStr)) { //우선순위 함수에서 정한 우선순위대로 진행
-                        Collection[j] = Operator_stack.pop();
-                        j++;
+                    while (!Operator_stack.isEmpty() && priority(Operator_stack.peek()) >= priority(checkStr)) { //우선순위 함수에서 정한 우선순위대로 스택 넣거나 뺴기
+                        Collection[index] = Operator_stack.pop();
+                        index++;
                     }
                     Operator_stack.push(checkStr);
                 }
@@ -161,22 +166,22 @@ public class Main {
                     }
 
                     try {
-                        Integer.parseInt(checkStr);
+                        Integer.parseInt(checkStr); //임의로 정수로 변환
                     }
-                    catch (NumberFormatException e) {   //예외처리4. 계산할 두 식 int 변수 범위를 벗어날 때 예외처리
+                    catch (NumberFormatException e) { //계산할 숫자 int 변수 범위를 벗어날 때 예외처리
                         System.out.println("-2,147,483,648 ~ 2,147,483,647의 값을 입력하세요");
                         continue loopOut;
                     }
 
-                    Collection[j] = checkStr;//숫자는 게산식 배열에 그냥 넣기
-                    j++;
+                    Collection[index] = checkStr;//숫자는 게산식 배열에 그냥 넣기
+                    index++;
                 }
             }
 
             //스택에 남은 연산자 빼기
             while (!Operator_stack.isEmpty()) {
-                Collection[j] = Operator_stack.pop();
-                j++;
+                Collection[index] = Operator_stack.pop();
+                index++;
             }
 
             String[] new_Collection = Arrays.copyOf(Collection, Collection.length - parentheses_num); //괄호만큼 null값이 생겨서 배열 새로 생성(parentheses_num : 괄호 숫자)
@@ -184,7 +189,7 @@ public class Main {
             cal.setValue(new_Collection);
             value = cal.getCalculate();
             if(value == 0) {
-                continue loopOut;
+                continue;
             }
 
             //연산 이후 동작 선택
