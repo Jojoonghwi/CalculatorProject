@@ -5,7 +5,6 @@ import java.util.Queue;
 import java.util.Stack;
 
 public class Calculator {
-    private int sqrt_result;//제곱근 결과 실수형
     private String[] new_Collection;
 
     private Queue<Double> resultQueue = new LinkedList<Double>(); //계산 기록 출력할 Queue
@@ -15,7 +14,7 @@ public class Calculator {
         this.new_Collection = new_Collection;
     }
 
-    public double getCalculate() {
+    public void getCalculate() {
         double firstNum;
         double secondNum;
         double result = 0;
@@ -78,8 +77,6 @@ public class Calculator {
         System.out.println("결과 : " + result);
         resultQueue.add(result);//Queue에 연산 결과 저장
         result_Stack.clear();
-
-        return result;
     }
 
     //기록 삭제

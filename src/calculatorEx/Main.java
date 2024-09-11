@@ -10,12 +10,16 @@ import java.util.List;
 //3. 0으로 나누려고 할 때 다시 입력
 //4. 띄어쓰기 있으면 다시 입력하도록
 //5. 음수 입력 못하도록(맨앞과 괄호 다음만 확인)
+//6. int 형 범위애서만 입력 가능하도록 예외처리
+//7. 정확한 계산식이 아닐 경우 다시 입력 ex) 1+
+//7. 연산자 연속 입력 예외처리 ex) 1++2
+//  - 'r' 연산자는 뒤에 연산자가 올 수 있어서 한번 더 예외처리
 
 //추가기능
 //1. 콘솔에 계산식 문자열로 입력
 //2. 괄호 입력, 제곱(^), 제곱근(r)
 //3. 아무곳에서나 exit 입력하여 종료(break loopOut:)
-//4. 실수형 입력 가능(Int 타입->double 타입)
+//기록 조회, 맨 처음 데이터 삭제, 모두 삭제 기능 추가
 
 //연산자 우선순위 정하는 함수
 public class Main {
@@ -40,11 +44,9 @@ public class Main {
         Calculator cal = new Calculator();
 
         String str1; //계산할 식 입력 받을 문자열
-        int index = 0; //배열 저장 인덱스
         int parentheses_num = 0; //괄호 갯수
 
         Stack<String> Operator_stack = new Stack<>(); //후위 연산에 필요한 연산자, 괄호를 담을 스택
-        List<String> inputStr_List = new ArrayList<>(); //계산식을 공백 기준으로 담을 리스트
 
         loopOut:
         while (true) {
@@ -85,15 +87,16 @@ public class Main {
             str1 = str1.replace("r", " r ");
             str1 = str1.replace("  ", " "); //띄어쓰기 두개 생겨서 '+('
 
-            String[] inputstr = str1.split(" ");//입력 받은 계산 식 띄어쓰기 기준으로 한글자씩 배열에 저장
+            String[] inputStr = str1.split(" ");//입력 받은 계산 식 띄어쓰기 기준으로 한글자씩 배열에 저장
+            List<String> inputStr_List = new ArrayList<>(); //계산식을 공백 기준으로 담을 리스트
 
             //문자열 배열 값 리스트에 저장
-
-            for(int i=0; i<inputstr.length; i++) {
-                inputStr_List.add(inputstr[i]);
+            for(int i=0; i<inputStr.length; i++) {
+                inputStr_List.add(inputStr[i]);
             }
 
             if(inputStr_List.size() < 3 && !(str1.contains(" r "))) {//루트 연산자가 아니면 3개 이상 있어야 완전한 식
+                System.out.println("식이 완전하지 않습니다");
                 continue;
             }
 
@@ -110,9 +113,11 @@ public class Main {
 
             String[] Collection = new String[inputStr_List.size()];//후위 계산식 넣을 배열
 
+            int index = 0; //배열 저장 인덱스
             //배열에 후위식 정렬
             for (int i = 0; i < inputStr_List.size(); i++) {
                 String checkStr = inputStr_List.get(i);
+
                 if (checkStr.equals("(")) {
                     //괄호 다음 '-'일때
                     if (inputStr_List.get(i + 1).equals("-")) {
@@ -184,13 +189,10 @@ public class Main {
                 index++;
             }
 
-            String[] new_Collection = Arrays.copyOf(Collection, Collection.length - parentheses_num); //괄호만큼 null값이 생겨서 배열 새로 생성(parentheses_num : 괄호 숫자)
-            double value;
+            String[] new_Collection = Arrays.copyOf(Collection, Collection.length - parentheses_num); //괄호만큼 null 값이 생겨서 배열 새로 생성(parentheses_num : 괄호 숫자)
+
             cal.setValue(new_Collection);
-            value = cal.getCalculate();
-            if(value == 0) {
-                continue;
-            }
+            cal.getCalculate();
 
             //연산 이후 동작 선택
             System.out.print("원하는 가능 입력 - 기록 조회 : 1 / 데이터 삭제 : 2 / 모두 삭제 : 3 / 종료 : exit : ");
