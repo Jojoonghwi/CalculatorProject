@@ -136,14 +136,23 @@ public class Main {
                     parentheses_num++;
                 }
                 else if ((checkStr.equals("+")) || checkStr.equals("-") || checkStr.equals("*") || checkStr.equals("/") || checkStr.equals("^") || checkStr.equals("r")) {
-                    //연산자 연속으로 입력 예외처리 ex)2++3
-                    if(!checkStr.equals("r")) { //식이 r로 끝날 때 [i + 1]조회 시 에러
-                        if ((inputStr_List.get(i + 1).equals("+")) || inputStr_List.get(i + 1).equals("-") || inputStr_List.get(i + 1).equals("*")
-                                || inputStr_List.get(i + 1).equals("/") || inputStr_List.get(i + 1).equals("^")) {
-                            System.out.println("연산자가 연속으로 입력되었습니다");
+                    //1. 연산자 연속으로 오는지 확인 2. 식이 연산자로 끝나는지 확인
+                    if (!checkStr.equals("r")) { //식이 r로 끝날 때 [i + 1]조회 시 에러
+                        try {
+                            if ((inputStr_List.get(i + 1).equals("+")) || inputStr_List.get(i + 1).equals("-") || inputStr_List.get(i + 1).equals("*")
+                                    || inputStr_List.get(i + 1).equals("/") || inputStr_List.get(i + 1).equals("^")) {
+
+                                System.out.println("연산자가 연속으로 입력되었습니다");
+                                continue loopOut;
+                            }
+                        }
+
+                        catch (IndexOutOfBoundsException e) {
+                            System.out.println("완전한 식이 아닙니다");
                             continue loopOut;
                         }
                     }
+
                     if (checkStr.equals("/")) {
                         //나누기 다음 값이 0일때
                         if (inputStr_List.get(i + 1).equals("0")) {
